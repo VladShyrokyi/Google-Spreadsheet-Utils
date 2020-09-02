@@ -5,6 +5,6 @@ class Sheet {
     }
     
     GetDataRange() {
-         this.sheet.getRange()
+        return this.sheet.getRange()
     }
 }
