@@ -1,14 +1,26 @@
 class Menu_Main {
-  constructor(UI) {
-    this.Menu_Main = new Menu(UI, 'API Serpstat');
+  constructor(UI, Name = String) {
+    this.Menu_Main = new Menu(UI, Name);
+  }
+}
+
+class MenuSERP extends Menu_Main {
+  constructor(UI, Name) {
+    super(UI, Name);
     this.Menu_Main.CreateMenu('Refresh',`MainItems.item1`);
     this.Menu_Main.CreateMenu('Sorting by groups',`MainItems.item2`);
+  }
+}
+
+class MenuGSC extends Menu_Main {
+  constructor(UI, Name = String) {
+    super(UI, Name);
     this.Menu_Main.CreateMenu(`Authentication`, `MainItems.item3`);
     this.Menu_Main.CreateMenu(`Reset OAuth`, `MainItems.item4`);
-    this.Menu_Main.CreateMenu(`Debug JSON Sites`, `MainItems.item5`);
-    this.Menu_Main.CreateMenu(`Debug JSON Sitemap Get`, `MainItems.item6`);
-    this.Menu_Main.CreateMenu(`Debug JSON Sitemap Set`, `MainItems.item7`);
-    this.Menu_Main.CreateMenu(`Debug JSON Sitemap Delete`, `MainItems.item8`);
+    this.Menu_Main.CreateMenu(`Get Sites (In Current Cell)`, `MainItems.item5`);
+    this.Menu_Main.CreateMenu(`Sitemap Get`, `MainItems.item6`);
+    this.Menu_Main.CreateMenu(`Sitemap Set`, `MainItems.item7`);
+    this.Menu_Main.CreateMenu(`Sitemap Delete`, `MainItems.item8`);
     this.Menu_Main.CreateMenu(`Active Range Sitemap Set`, `MainItems.item9`);
   }
 }
