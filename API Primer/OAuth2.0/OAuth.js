@@ -13,26 +13,31 @@
  *                             to the headers in this method.
  * @return {HttpResponse} the result from the UrlFetchApp.fetch() call.
  */
-function accessProtectedResource(url, method_opt, headers_opt, Debug = 0) {
-    var service = getOAuthService();
-    var maybeAuthorized = service.hasAccess();
+function accessProtectedResource(url, method_opt, headers_opt, POST_Object, Debug = 0) {
+    let service = getOAuthService();
+    let maybeAuthorized = service.hasAccess();
     if (Debug == 1) showMessageBox(`Сервис подключен`);
     if (maybeAuthorized) {
-        if (Debug == 1) showMessageBox(`Авторизован`);
+      if (Debug == 1) showMessageBox(`Авторизован`);
       // A token is present, but it may be expired or invalid. Make a
       // request and check the response code to be sure.
   
       // Make the UrlFetch request and return the result.
-      var accessToken = service.getAccessToken();
-      var method = method_opt || 'get';
-      var headers = headers_opt || {};
-      headers['Authorization'] =
-          Utilities.formatString('Bearer %s', accessToken);
-      var resp = UrlFetchApp.fetch(url, {
+      let accessToken = service.getAccessToken();
+      let method = method_opt || 'get';
+      let headers = headers_opt || {};
+      headers['Authorization'] = Utilities.formatString('Bearer %s', accessToken);
+      let param = {
         'headers': headers,
         'method' : method,
         'muteHttpExceptions': true, // Prevents thrown HTTP exceptions.
-      });
+      }
+      if (POST_Object === 'undefined') {
+        param['contentType'] = 'application/json';
+        param['payload'] = JSON.stringify(POST_Object);
+      }
+      var resp = UrlFetchApp.fetch(url, param);
+      isObject(null) == false
       
       var code = resp.getResponseCode();
       

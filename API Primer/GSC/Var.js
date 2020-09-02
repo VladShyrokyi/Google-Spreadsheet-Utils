@@ -8,9 +8,11 @@ var CLIENT_ID = '661788518396-h62gh4qe5hpmrvf7snk1t14jet25revk.apps.googleuserco
 var CLIENT_SECRET = 'IQlDMP0Wos6WE38kCHtt3Pqj';
 var SERVICE_SCOPE_REQUESTS = `https://www.googleapis.com/auth/webmasters https://www.googleapis.com/auth/webmasters.readonly`;
 
-//method GET give indo
+//method GET give info
 //method PUT set info
-//method DELETE -- indo
+//method DELETE -- info
+//method POST 
+//method HOST
 
 //SITES
 var SERVICE_Sites = 'https://www.googleapis.com/webmasters/v3/sites';

@@ -11,7 +11,7 @@ function GSC_ForMenu(GSC = Function, Сontrol = 0) {
 }
 
 function GSC_request(SERVICE, method, ComplitedStat = 0) {
-  let json = accessProtectedResource(SERVICE, method);
+  let json = accessProtectedResource(SERVICE, method, Debug = ComplitedStat);
   if (ComplitedStat == 1) showMessageBox(`Complited`, json);
   try {
     return json_parse = JSON.parse(json);
