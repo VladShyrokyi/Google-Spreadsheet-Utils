@@ -1,3 +1,4 @@
+
 /**
  * Attempts to access a non-Google API using a constructed service
  * object.
@@ -21,7 +22,7 @@ function accessProtectedResource(url, method_opt, headers_opt, POST_Object, Debu
       if (Debug == 1) showMessageBox(`Авторизован`);
       // A token is present, but it may be expired or invalid. Make a
       // request and check the response code to be sure.
-  
+
       // Make the UrlFetch request and return the result.
       let accessToken = service.getAccessToken();
       let method = method_opt || 'get';
@@ -32,13 +33,13 @@ function accessProtectedResource(url, method_opt, headers_opt, POST_Object, Debu
         'method' : method,
         'muteHttpExceptions': true, // Prevents thrown HTTP exceptions.
       }
-      if (POST_Object === 'undefined') {
+      if (POST_Object != false) {
         param['contentType'] = 'application/json';
         param['payload'] = JSON.stringify(POST_Object);
       }
+      showMessageBox(`Debug`, JSON.stringify(param));
       var resp = UrlFetchApp.fetch(url, param);
-      isObject(null) == false
-      
+
       var code = resp.getResponseCode();
       
       // Success

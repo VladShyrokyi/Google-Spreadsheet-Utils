@@ -10,8 +10,8 @@ function GSC_ForMenu(GSC = Function, Сontrol = 0) {
   GSC(input, Сontrol);
 }
 
-function GSC_request(SERVICE, method, ComplitedStat = 0) {
-  let json = accessProtectedResource(SERVICE, method, Debug = ComplitedStat);
+function GSC_request(SERVICE, method, param, ComplitedStat = 0) {
+  let json = accessProtectedResource(SERVICE, method, {}, param, ComplitedStat);
   if (ComplitedStat == 1) showMessageBox(`Complited`, json);
   try {
     return json_parse = JSON.parse(json);
@@ -21,7 +21,7 @@ function GSC_request(SERVICE, method, ComplitedStat = 0) {
 }
 
 function GSC_getSitesJSON() {
-  let request = GSC_request(SERVICE_Sites, `GET`, 1);
+  let request = GSC_request(SERVICE_Sites, `GET`, false, 1);
   var URLs = []
   for (var i in request.siteEntry) {
     URLs.push([request.siteEntry[i].siteUrl, request.siteEntry[i].permissionLevel]); 
