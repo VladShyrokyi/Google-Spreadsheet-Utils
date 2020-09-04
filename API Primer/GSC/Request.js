@@ -32,18 +32,18 @@ function GSC_getSitesJSON() {
 function GSC_getSitemap(input, Query_Debug = 0) {
   let query = SERVICE_Sitemap(input, `${input}sitemap.xml`);
   if (Query_Debug == 1) showMessageBox(`Запрос: `, query);
-  let request = GSC_request(query, `GET`, Query_Debug);
+  let request = GSC_request(query, `GET`, false, Query_Debug);
   
 }
 
 function GSC_setSitemap(input, Query_Debug = 0) {
   let query = SERVICE_Sitemap(input, `${input}sitemap.xml`)
   if (Query_Debug == 1) showMessageBox(`Запрос: `, query);
-  GSC_request(query, `PUT`, Query_Debug);
+  GSC_request(query, `PUT`, false, Query_Debug);
 }
 
 function GSC_deleteSitemap(input, Query_Debug = 0) {
   let query = SERVICE_Sitemap(input, `${input}sitemap.xml`);
   if (Query_Debug == 1) showMessageBox(`Запрос: `, query);
-  let request = GSC_request(query, `DELETE`, Query_Debug);
+  let request = GSC_request(query, `DELETE`, false, Query_Debug);
 }
