@@ -37,8 +37,19 @@ function GSC_getSitemap(input, Query_Debug = 0) {
   let query = SERVICE_Sitemap(input, `${input}sitemap.xml`);
   if (Query_Debug == 1) showMessageBox(`Запрос: `, query);
   let response = GSC_request(query, `GET`, false, Query_Debug);
-  let range = SpreadsheetApp.getCurrentCell();
-  range.setValue(response);
+  let SS = SpreadsheetApp.getActiveSheet();
+  let range = SS.getCurrentCell();
+  let column = range.getColumn();
+  let row = range.getRow();
+  let responseArray = [[]];
+  let counter = 0;
+  for (let i in response) { 
+    responseArray[0][counter] = response[i];
+    counter++;
+  }
+  showMessageBox(`Debug`, JSON.stringify(responseArray))
+  let range_new = SS.getRange(row, column, 1, counter);
+  range_new.setValues(responseArray);
 }
 
 function GSC_setSitemap(input, Query_Debug = 0) {
