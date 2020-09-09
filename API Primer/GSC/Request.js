@@ -29,11 +29,16 @@ function GSC_getSitesJSON() {
   return URLs;
 }
 
+function GSC_get() {
+
+}
+
 function GSC_getSitemap(input, Query_Debug = 0) {
   let query = SERVICE_Sitemap(input, `${input}sitemap.xml`);
   if (Query_Debug == 1) showMessageBox(`Запрос: `, query);
-  let request = GSC_request(query, `GET`, false, Query_Debug);
-  
+  let response = GSC_request(query, `GET`, false, Query_Debug);
+  let range = SpreadsheetApp.getCurrentCell();
+  range.setValue(response);
 }
 
 function GSC_setSitemap(input, Query_Debug = 0) {
