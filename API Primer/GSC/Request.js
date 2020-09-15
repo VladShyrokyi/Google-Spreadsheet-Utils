@@ -29,8 +29,22 @@ function GSC_getSitesJSON() {
   return URLs;
 }
 
-function GSC_get() {
-
+function GSC_getSitemaps(URLs = Array) {
+  let servise = new RequestToService();
+  let CheckContinue;
+  if (!isArray(URLs)) {
+    CheckContinue = showMessageBox(`Not Array`,
+    `Do you want to take a sitemap?`);
+    if (CheckContinue == CANCEL) {
+      return
+    }
+    servise.Request()
+  }
+  if (CheckContinue == OK) {
+    for (let i = 0; i < URLs.length; i++) {
+      
+    }
+  }
 }
 
 function GSC_getSitemap(input, Query_Debug = 0) {

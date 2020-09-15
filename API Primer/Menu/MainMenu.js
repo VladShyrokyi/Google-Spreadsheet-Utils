@@ -1,36 +1,49 @@
 class Menu_Main {
   constructor(UI, Name = String) {
     this.Menu_Main = new Menu(UI, Name);
+    console.log(this.name);
+  }
+  CreateMenu(names, numbers) {
+    for (let number in numbers) {
+      if (number == `name`) {
+
+      } else {
+        this.Menu_Main.CreateMenu(names[number], `${numbers.name}.${number}`);
+      }
+    }
   }
 }
 
 class MenuSERP extends Menu_Main {
   constructor(UI, Name) {
     super(UI, Name);
-    this.Menu_Main.CreateMenu('Refresh',`MainItems.item1`);
-    this.Menu_Main.CreateMenu('Sorting by groups',`MainItems.item2`);
+    this.CreateMenu(SERPitemsName, SERPitems);
   }
 }
 
 class MenuGSC extends Menu_Main {
   constructor(UI, Name = String) {
     super(UI, Name);
-    this.Menu_Main.CreateMenu(`Authentication`, `MainItems.item3`);
-    this.Menu_Main.CreateMenu(`Reset OAuth`, `MainItems.item4`);
-    this.Menu_Main.CreateMenu(`Get Sites (In Current Cell)`, `MainItems.item5`);
-    this.Menu_Main.CreateMenu(`Sitemap Get`, `MainItems.item6`);
-    this.Menu_Main.CreateMenu(`Sitemap Set`, `MainItems.item7`);
-    this.Menu_Main.CreateMenu(`Sitemap Delete`, `MainItems.item8`);
-    this.Menu_Main.CreateMenu(`Active Range Sitemap Set`, `MainItems.item9`);
+    this.CreateMenu(GSCitemsName, GSCitems);
   }
 }
 
-var MainItems = {
-  item1: () => { RefreshRange() },
-  item2: () => { Сlustering() },
-  item3: () => { accessProtectedResource('https://www.googleapis.com/webmasters/v3/sites')},
-  item4: () => { resetOAuth()},
-  item5: () => {
+var SERPitems = {
+  name: `SERPitems`,
+  item1: () => { RefreshFormula() },
+  item2: () => { Сlustering() }
+}
+
+var SERPitemsName = {
+  item1: `Refresh`,
+  item2: `Sorting by groups`
+}
+
+var GSCitems = {
+  name: `GSCitems`,
+  item1: () => { accessProtectedResource('https://www.googleapis.com/webmasters/v3/sites')},
+  item2: () => { resetOAuth()},
+  item3: () => {
     let URLs = GSC_getSitesJSON();
     showMessageBox(`Array`, JSON.stringify(URLs));
     let SS = SpreadsheetApp.getActiveSheet();
@@ -38,10 +51,10 @@ var MainItems = {
     let range = SS.getRange(A1.getRow(), A1.getColumn(), URLs.length, URLs[0].length);
     range.setValues(URLs);
   },
-  item6: () => { GSC_ForMenu(GSC_getSitemap, 1)},
-  item7: () => { GSC_ForMenu(GSC_setSitemap, 1)},
-  item8: () => { GSC_ForMenu(GSC_deleteSitemap, 1)},
-  item9: () => { 
+  item4: () => { GSC_ForMenu(GSC_getSitemap, 1)},
+  item5: () => { GSC_ForMenu(GSC_setSitemap, 1)},
+  item6: () => { GSC_ForMenu(GSC_deleteSitemap, 1)},
+  item7: () => { 
     let range = SpreadsheetApp.getSelection().getActiveRange();
     showMessageBox(range.getA1Notation());
     let Values = range.getValues();
@@ -53,4 +66,14 @@ var MainItems = {
       GSC_setSitemap(encodeURIComponent(Values[i]));
     }
   }
+}
+
+var GSCitemsName = {
+  item1: `Authentication`,
+  item2: `Reset OAuth`,
+  item3: `Get Sites (To Active Range)`,
+  item4: `Sitemap Get`,
+  item5: `Sitemap Set`,
+  item6: `Sitemap Delete`,
+  item7: `Active Range Sitemap Set`
 }

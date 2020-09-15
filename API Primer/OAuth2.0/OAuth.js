@@ -17,13 +17,13 @@
 function accessProtectedResource(url, method_opt, headers_opt, POST_Object, Debug = 0) {
     let service = getOAuthService();
     let maybeAuthorized = service.hasAccess();
-    if (Debug == 1) showMessageBox(`Сервис подключен`);
-    if (maybeAuthorized) {
-      if (Debug == 1) showMessageBox(`Авторизован`);
-      // A token is present, but it may be expired or invalid. Make a
-      // request and check the response code to be sure.
 
-      // Make the UrlFetch request and return the result.
+    if (Debug == 1) showMessageBox(`Сервис подключен`);
+    
+    if (maybeAuthorized) {
+      
+      if (Debug == 1) showMessageBox(`Авторизован`);
+
       let accessToken = service.getAccessToken();
       let method = method_opt || 'get';
       let headers = headers_opt || {};
@@ -37,11 +37,12 @@ function accessProtectedResource(url, method_opt, headers_opt, POST_Object, Debu
         param['contentType'] = 'application/json';
         param['payload'] = JSON.stringify(POST_Object);
       }
-      showMessageBox(`Debug`, JSON.stringify(param));
-      var resp = UrlFetchApp.fetch(url, param);
 
-      var code = resp.getResponseCode();
+      if (Debug == 1) showMessageBox(`Debug`, JSON.stringify(param));
       
+      var resp = UrlFetchApp.fetch(url, param);
+      var code = resp.getResponseCode();
+
       // Success
       if (code >= 200 && code < 300) {
         return resp.getContentText("utf-8");
@@ -49,9 +50,6 @@ function accessProtectedResource(url, method_opt, headers_opt, POST_Object, Debu
       // Not fully authorized for this action.
       } else if (code == 401 || code == 403) {
         maybeAuthorized = false;
-
-      // Handle other response codes by logging them and throwing an
-      // exception.
       } else {
         console.error("Backend server error (%s): %s", code.toString(), 
         resp.getContentText("utf-8"));
