@@ -15,11 +15,14 @@ class Menu implements IMenu {
 				UI.createMenu(`GSC`)
 					.addItem(`Authentication`, `TEST`)
 					.addItem(`Reset OAuth`, `TEST`)
-					.addItem(`Get Sites (To Active Range)`, `TEST`)
+					.addItem(`Get Sites (To Active Range)`, `TESTGSC`)
 					.addItem(`Sitemap Get`, `TEST`)
 					.addItem(`Sitemap Set`, `TEST`)
 					.addItem(`Sitemap Delete`, `TEST`)
 					.addItem(`Active Range Sitemap Set`, `TEST`)
+			)
+			.addSubMenu(
+				UI.createMenu(`Properties`).addItem(`Get properties`, `GetProperties`)
 			)
 			.addToUi();
 	}
@@ -42,4 +45,12 @@ class CustomUI {
 		}
 		return response.getResponseText();
 	}
+}
+
+function TESTGSC() {
+	let urls = GSC.getSites();
+	CustomUI.showMessageBox(
+		`URLs`,
+		urls.map((e) => `Site: ${JSON.stringify(e, null, ` \r\n`)}`).join(`\r\n`)
+	);
 }
