@@ -133,7 +133,7 @@ function ValidateObject(e, Path) {
     return `Element empty`;
 }
 function CreateOutput(data, Options) {
-    if (typeof data == `string`) {
+    if (typeof data == `string` && typeof data == `number`) {
         return data;
     }
     else if (Array.isArray(data)) {

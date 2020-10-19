@@ -145,7 +145,7 @@ function ValidateObject(e: elementObj, Path: string): element {
 	return `Element empty`;
 }
 function CreateOutput(data: element, Options: OptionsValid) {
-	if (typeof data == `string`) {
+	if (typeof data == `string` && typeof data == `number`) {
 		return data;
 	} else if (Array.isArray(data)) {
 		let DoubleArr: Array<string[] | string> = [];
