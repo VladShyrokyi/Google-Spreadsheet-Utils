@@ -6,7 +6,7 @@ class Menu {
             .addSubMenu(UI.createMenu(`SerpStat API`)
             .addItem("Start", `TEST`)
             .addItem(`Refresh`, `RefreshCellFormula`)
-            .addItem(`Sorting by groups`, `Clustering`)
+            .addItem(`Sorting by groups`, `Grouping`)
             .addItem(`Move active range`, `CopyData`))
             .addSubMenu(UI.createMenu(`GSC`)
             .addItem(`Authentication`, `TEST`)
@@ -36,6 +36,10 @@ class CustomUI {
         return response.getResponseText();
     }
 }
+CustomUI.CANCEL = () => SpreadsheetApp.getUi().Button.CANCEL ||
+    SpreadsheetApp.getUi().Button.CLOSE ||
+    SpreadsheetApp.getUi().Button.NO;
+CustomUI.OK = () => SpreadsheetApp.getUi().Button.OK || SpreadsheetApp.getUi().Button.YES;
 function TESTGSC() {
     let urls = GSC.getSites();
     CustomUI.showMessageBox(`URLs`, urls.map((e) => `Site: ${JSON.stringify(e, null, ` \r\n`)}`).join(`\r\n`));

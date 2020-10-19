@@ -18,38 +18,3 @@ var CLIENT_ID =
 	"661788518396-h62gh4qe5hpmrvf7snk1t14jet25revk.apps.googleusercontent.com";
 var CLIENT_SECRET = "IQlDMP0Wos6WE38kCHtt3Pqj";
 var SERVICE_SCOPE_REQUESTS = `https://www.googleapis.com/auth/webmasters https://www.googleapis.com/auth/webmasters.readonly`;
-
-//method GET give info
-//method PUT set info
-//method DELETE -- info
-//method POST
-//method HOST
-
-var CANCEL = () => SpreadsheetApp.getUi().Button.CANCEL;
-var OK = () => SpreadsheetApp.getUi().Button.OK;
-
-/**
- * Save property in document
- * @param {string} Key
- * @param {string} Property
- * @customfunction
- */
-function SaveProperty(Key: string, Property: string) {
-	let property = PropertiesService.getDocumentProperties();
-	property.setProperty(Key, Property);
-	return Key;
-}
-
-function GetProperties() {
-	let property = PropertiesService.getDocumentProperties();
-	let prop = property.getKeys();
-	let values: string[] = [];
-	prop.map((e) => {
-		values.push(property.getProperty(e) || ``);
-	});
-	let text = [prop, values];
-	CustomUI.showMessageBox(
-		`Test`,
-		text[0].map((e, i) => `${e}: ${text[1][i]}`).join(` \r\n`)
-	);
-}

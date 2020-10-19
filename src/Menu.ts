@@ -8,7 +8,7 @@ class Menu implements IMenu {
 				UI.createMenu(`SerpStat API`)
 					.addItem("Start", `TEST`)
 					.addItem(`Refresh`, `RefreshCellFormula`)
-					.addItem(`Sorting by groups`, `Clustering`)
+					.addItem(`Sorting by groups`, `Grouping`)
 					.addItem(`Move active range`, `CopyData`)
 			)
 			.addSubMenu(
@@ -45,12 +45,20 @@ class CustomUI {
 		}
 		return response.getResponseText();
 	}
+	static CANCEL = (): GoogleAppsScript.Base.Button =>
+		SpreadsheetApp.getUi().Button.CANCEL ||
+		SpreadsheetApp.getUi().Button.CLOSE ||
+		SpreadsheetApp.getUi().Button.NO;
+	static OK = (): GoogleAppsScript.Base.Button =>
+		SpreadsheetApp.getUi().Button.OK || SpreadsheetApp.getUi().Button.YES;
 }
 
 function TESTGSC() {
 	let urls = GSC.getSites();
-	CustomUI.showMessageBox(
-		`URLs`,
-		urls.map((e) => `Site: ${JSON.stringify(e, null, ` \r\n`)}`).join(`\r\n`)
-	);
+	if (urls != null) {
+		CustomUI.showMessageBox(
+			`URLs`,
+			urls.map((e) => `Site: ${JSON.stringify(e, null, ` \r\n`)}`).join(`\r\n`)
+		);
+	}
 }

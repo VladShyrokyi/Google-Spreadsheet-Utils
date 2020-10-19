@@ -1,23 +1,26 @@
 interface IData {
 	readonly sheet: GoogleAppsScript.Spreadsheet.Sheet;
-	readonly range: GoogleAppsScript.Spreadsheet.Range;
+	readonly _range: GoogleAppsScript.Spreadsheet.Range;
 	readonly Rows: number;
 	readonly Columns: number;
 	readonly data: any[][];
 }
 class Data implements IData {
-	range: GoogleAppsScript.Spreadsheet.Range;
+	sheet: GoogleAppsScript.Spreadsheet.Sheet;
+	_range: GoogleAppsScript.Spreadsheet.Range;
 	Rows: number;
 	Columns: number;
 	data: any[][];
-	constructor(readonly sheet: GoogleAppsScript.Spreadsheet.Sheet) {
-		this.range = sheet.getDataRange();
-		this.Rows = this.range.getNumRows();
-		this.Columns = this.range.getNumColumns();
-		this.data = this.range.getValues();
+	constructor(range: GoogleAppsScript.Spreadsheet.Range) {
+		this._range = range;
+		this.Rows = this._range.getNumRows();
+		this.Columns = this._range.getNumColumns();
+		range;
+		this.data = this._range.getValues();
+		this.sheet = this._range.getSheet();
 	}
 	Sorting(StartRow: number, SortingColumn: number) {
-		let checkValue: string | number = this.range
+		let checkValue: string | number = this._range
 			.getCell(StartRow, SortingColumn)
 			.getValue();
 		let Arr = [];
@@ -52,68 +55,71 @@ class Data implements IData {
 	// directed 1 - column+: 0 - row+
 	Copy(directed: number = 0) {
 		let rangeNew: GoogleAppsScript.Spreadsheet.Range;
-		if (directed == 1) rangeNew = this.range.offset(0, this.Columns);
-		else if (directed == 0) rangeNew = this.range.offset(this.Rows, 0);
-		else rangeNew = this.range;
-		this.range.copyTo(rangeNew);
+		if (directed == 1) rangeNew = this._range.offset(0, this.Columns);
+		else if (directed == 0) rangeNew = this._range.offset(this.Rows, 0);
+		else rangeNew = this._range;
+		this._range.copyTo(rangeNew);
 	}
 }
 class ActiveDate extends Data {
 	constructor(readonly sheet: GoogleAppsScript.Spreadsheet.Sheet) {
-		super(sheet);
-		this.range = sheet.getActiveRange() || sheet.getRange(1, 1);
-		this.Rows = this.range.getNumRows();
-		this.Columns = this.range.getNumColumns();
-		this.data = this.range.getValues();
+		super(sheet.getActiveRange() || sheet.getRange(1, 1));
 	}
 }
-function Clustering() {
-	let ss = SpreadsheetApp.getActiveSpreadsheet();
-	let sheet = ss.getActiveSheet();
-	let data = new Data(sheet);
-	let res = CustomUI.showInputBox(
-		`Clustering`,
-		`Enter the line number from which the grouping will start and the number of the column by which it will be sorted \r\n
-		Example: "Row = 2; Column = 1" (Default values)`
-	);
-	let Input: number[] = [];
-	if (
-		res == SpreadsheetApp.getUi().Button.CANCEL ||
-		res == SpreadsheetApp.getUi().Button.CLOSE
+class TemplateData extends Data {
+	// _header: Array<string | number>;
+	constructor(
+		readonly sheet: GoogleAppsScript.Spreadsheet.Sheet,
+		RowStart: number,
+		ColumnStart: number,
+		height: number,
+		width: number
 	) {
-		return;
-	} else if (res == ``) {
-		let Row = 2;
-		let Column = 1;
-		Input[0] = Row;
-		Input[1] = Column;
-	} else {
-		let resArr = res.toString().split(`; `);
-		resArr.map((e, i) => {
-			Input[i] = parseInt(e.split(` = `)[1]);
-		});
+		super(sheet.getRange(RowStart, ColumnStart, height, width));
+		this.header = sheet.getRange(RowStart, width).getValues()[0];
 	}
-	data.Sorting(Input[0], Input[1]);
+	set header(Values: Array<string | number>) {
+		if (Array.isArray(Values)) this.header = Values;
+		else {
+			this.header = [];
+			this.header[0] = Values;
+		}
+	}
+	get header() {
+		return this.header;
+	}
 }
-
-function CopyData() {
-	let res = CustomUI.showInputBox(
-		`Move active range`,
-		`Enter the direction in which you want to move the range. \r\n
-    Example: "0" (Row to down - Default values) or "1" (Column to right)`
+function MarkingQuery() {
+	let _token = `84a70800e984ef048ae0e352d2e093ed`;
+	let _reportType = ``;
+	let _base = ``;
+	let _searchRegion = ``;
+	let _result = `result`;
+	let _domain = `Domain`;
+	let _keywords = `Keywords`;
+	let sheet = SpreadsheetApp.getActiveSheet();
+	let template = new TemplateData(sheet, 1, 1, 5, 2);
+	let query: string[] = [];
+	template.header.find((v, i) => {
+		if (v == _domain && v == _keywords) {
+			template.data.forEach((y) => query.push(y[i]));
+		}
+	});
+	let URL = query.map((e) =>
+		CreateQueryAPI(e, _token, _reportType, _base, _searchRegion)
 	);
-	let Input: number = 0;
-	if (
-		res == SpreadsheetApp.getUi().Button.CANCEL ||
-		res == SpreadsheetApp.getUi().Button.CLOSE
-	)
-		return;
-	else if (res == 1) Input = res;
-	else if (res == 0) Input = res;
-	else if (res == ``) Input = 0;
-	else CustomUI.showMessageBox(`Error`, `Invalid input`);
-	let ss = SpreadsheetApp.getActiveSpreadsheet();
-	let sheet = ss.getActiveSheet();
-	let data = new ActiveDate(sheet);
-	data.Copy(Input);
+	let Keys = URL.map((e) => FetchToAPI(e));
+	let Values: any[][] = [];
+	let x = Values[0];
+	Keys.forEach((e, i) => {
+		let val = GiveFromCache(e, _result);
+		Array.isArray(val) ? (Values[i] = val) : (Values[i][0] = val);
+	});
+	let range = sheet.getRange(1, 3, 5, 2);
+	range.setValues(Values);
 }
+// class MarkingQuery {
+// 	constructor(template: TemplateData) {
+
+// 	}
+// }

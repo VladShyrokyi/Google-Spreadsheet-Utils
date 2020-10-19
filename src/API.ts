@@ -79,6 +79,8 @@ function FetchToAPI(URL: string): string {
 	if (cache == null) {
 		return `Not cache`;
 	}
+	if (URL.length >= 250) URL = URL.slice(0, 249);
+	cache.remove(URL);
 	cache.put(URL, content);
 	return URL;
 }
@@ -145,8 +147,10 @@ function ValidateObject(e: elementObj, Path: string): element {
 	return `Element empty`;
 }
 function CreateOutput(data: element, Options: OptionsValid) {
-	if (typeof data == `string` && typeof data == `number`) {
-		return data;
+	if (typeof data == `string`) {
+		return data.toString();
+	} else if (typeof data == `number`) {
+		return parseInt(data);
 	} else if (Array.isArray(data)) {
 		let DoubleArr: Array<string[] | string> = [];
 		for (let y = 0; y < data.length; y++) {
