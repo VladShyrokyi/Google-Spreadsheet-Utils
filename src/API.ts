@@ -74,15 +74,16 @@ function FetchToAPI(URL: string): string {
 	if (URL == null || URL == `undefined` || URL == `` || URL == `No Query`) {
 		return URL;
 	}
-	let content = UrlFetchApp.fetch(URL).getContentText();
 	let cache = CacheService.getDocumentCache();
-	if (cache == null) {
+	let Key = URL.slice(0, 249);
+	if (cache?.get(Key) != null || cache?.get(Key) != undefined || cache?.get(Key) != ``) {
+		let content = UrlFetchApp.fetch(URL).getContentText();
+		cache?.remove(Key);
+		cache?.put(Key, content);
+	}	else if (cache == null) {
 		return `Not cache`;
 	}
-	if (URL.length >= 250) URL = URL.slice(0, 249);
-	cache.remove(URL);
-	cache.put(URL, content);
-	return URL;
+	return Key;
 }
 /**
  * Outputting data along a path from the cache.

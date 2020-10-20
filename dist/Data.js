@@ -4,6 +4,7 @@ class Data {
         this._range = range;
         this.Rows = this._range.getNumRows();
         this.Columns = this._range.getNumColumns();
+        range;
         this.data = this._range.getValues();
         this.sheet = this._range.getSheet();
     }
@@ -64,8 +65,52 @@ class ActiveDate extends Data {
     }
 }
 class TemplateData extends Data {
-    constructor(sheet, y, x, height, width) {
-        super(sheet.getRange(y, x, height, width));
+    // _header: Array<string | number>;
+    constructor(sheet, RowStart, ColumnStart, height, width) {
+        super(sheet.getRange(RowStart, ColumnStart, height, width));
         this.sheet = sheet;
+        this.header = sheet.getRange(RowStart, width).getValues()[0];
+    }
+    set header(Values) {
+        if (Array.isArray(Values))
+            this.header = Values;
+        else {
+            this.header = [];
+            this.header[0] = Values;
+        }
+    }
+    get header() {
+        return this.header;
     }
 }
+function MarkingQuery() {
+    let _token = `84a70800e984ef048ae0e352d2e093ed`;
+    let _reportType = ``;
+    let _base = ``;
+    let _searchRegion = ``;
+    let _result = `result`;
+    let _domain = `Domain`;
+    let _keywords = `Keywords`;
+    let sheet = SpreadsheetApp.getActiveSheet();
+    let template = new TemplateData(sheet, 1, 1, 5, 2);
+    let query = [];
+    template.header.find((v, i) => {
+        if (v == _domain && v == _keywords) {
+            template.data.forEach((y) => query.push(y[i]));
+        }
+    });
+    let URL = query.map((e) => CreateQueryAPI(e, _token, _reportType, _base, _searchRegion));
+    let Keys = URL.map((e) => FetchToAPI(e));
+    let Values = [];
+    let x = Values[0];
+    Keys.forEach((e, i) => {
+        let val = GiveFromCache(e, _result);
+        Array.isArray(val) ? (Values[i] = val) : (Values[i][0] = val);
+    });
+    let range = sheet.getRange(1, 3, 5, 2);
+    range.setValues(Values);
+}
+// class MarkingQuery {
+// 	constructor(template: TemplateData) {
+// 	}
+// }

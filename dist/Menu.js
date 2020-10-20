@@ -42,5 +42,7 @@ CustomUI.CANCEL = () => SpreadsheetApp.getUi().Button.CANCEL ||
 CustomUI.OK = () => SpreadsheetApp.getUi().Button.OK || SpreadsheetApp.getUi().Button.YES;
 function TESTGSC() {
     let urls = GSC.getSites();
-    CustomUI.showMessageBox(`URLs`, urls.map((e) => `Site: ${JSON.stringify(e, null, ` \r\n`)}`).join(`\r\n`));
+    if (urls != null) {
+        CustomUI.showMessageBox(`URLs`, urls.map((e) => `Site: ${JSON.stringify(e, null, ` \r\n`)}`).join(`\r\n`));
+    }
 }
