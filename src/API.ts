@@ -169,18 +169,20 @@ function CreateOutput(data: element, Options: OptionsValid) {
     //Create Result Array
     let DoubleArr: Array<Array<string | number> | string | number> = [];
 
-    //Іterating over an array
-    data.forEach((Value, y) => {
+    //Iterating over an array
+    data.forEach((Row, y) => {
       if (Options?.[`isCountMax`] == true && Options[`CountMax`] == y) return; //Check options
-      if (typeof Value == 'string' || typeof Value == `number`)
-        DoubleArr[y] = Value;
-      else if (Array.isArray(Value))
-        Value.forEach((e, i) =>
-          typeof e == `object`
-            ? DoubleArr.push([JSON.stringify(e)])
-            : DoubleArr.push([e])
+      if (typeof Row == 'string' || typeof Row == `number`) DoubleArr[y] = Row;
+      // else if (Options?.[`isRow`] == true) DoubleArr[y] = JSON.stringify(Value);
+      else if (Array.isArray(Row))
+        Row.forEach((Value, i) =>
+          typeof Value == `object`
+            ? DoubleArr.push([JSON.stringify(Value)])
+            : Array.isArray(Value)
+            ? DoubleArr.push([JSON.stringify(Value)])
+            : DoubleArr.push([Value])
         );
-      else DoubleArr.push(JSON.stringify(Object.values(Value)));
+      else DoubleArr.push(JSON.stringify(Object.values(Row)));
     });
 
     //Return result Array
@@ -206,5 +208,139 @@ class OptionsValid implements IOptions {
         this[`is${e}`] = true;
       }
     }, this);
+  }
+}
+interface IUrlAPI extends IUrl {
+  Base: string;
+  ReportType: string;
+  Query: string;
+  Token: string;
+  SearchRegion: string;
+}
+class UrlAPI {
+  // public get Params(): string[] {
+  //   return this._Params ? this._Params : [];
+  // }
+  // public set Params(value: string[]) {
+  //   this._Params = value.map((e) => encodeURIComponent(e));
+  // }
+  constructor(
+    private Base: string,
+    public ReportType: string,
+    public Query: string,
+    public Token: string,
+    public SearchRegion: string // public _Params?: string[]
+  ) {}
+  public toString(): string {
+    return (
+      `${encodeURI(this.Base)}` +
+      `${encodeURIComponent(this.ReportType)}` +
+      `?query=${encodeURIComponent(this.Query)}` +
+      `&token=${encodeURIComponent(this.Token)}` +
+      `&se=${encodeURIComponent(this.SearchRegion)}`
+      // +
+      // this.Params?.map((e, i) =>
+      //   i % 2 == 0
+      //     ? (e = encodeURIComponent(`&${e}`))
+      //     : (e = encodeURIComponent(`=${e}`))
+      // ).join(``)
+    );
+  }
+}
+class API {
+  private cache = CacheService.getDocumentCache();
+  public get UrlAPI(): string {
+    return this._UrlAPI.toString();
+  }
+  constructor(private readonly _UrlAPI: UrlAPI) {}
+  FetchQuery(Query: string) {
+    Query ? (this._UrlAPI.Query = encodeURIComponent(Query)) : '';
+    let Key = this._UrlAPI.toString().slice(0, 249);
+    let maybeValue = this.cache?.get(Key);
+    if (maybeValue || maybeValue != ``)
+      this.cache?.remove(Key) &&
+        this.cache.put(
+          Key,
+          UrlFetchApp.fetch(this._UrlAPI.toString()).getContentText()
+        );
+    return Key;
+  }
+  static GiveValue(Key: string, Path: string) {
+    let cache = CacheService.getDocumentCache();
+    let content = cache?.get(Key);
+    if (!content) return `-`;
+    let data: element = JSON.parse(content);
+    if (Path) Path.split(`/`).forEach((e) => (data = elementPath(data, e)));
+    else return `No Path`;
+    return data;
+  }
+}
+
+function elementPath(e: element, Path: string): element {
+  if (Array.isArray(e)) return e.map((e, i) => elementPath(e, Path));
+  else if (typeof e == `object`) return e[Path] ? e[Path] : `Element empty`;
+  else return e;
+}
+
+function writeValue(data: element, Options: string) {
+  return typeof data == `string` || typeof data == `number`
+    ? data
+    : Array.isArray(data)
+    ? toDoubleArray(data, Options)
+    : Object.values(data);
+}
+
+function toDoubleArray(Arr: Array<element>, Options: string) {
+  return Arr.map((Row, y) =>
+    typeof Row == `number` || typeof Row == `string`
+      ? Row
+      : Array.isArray(Row)
+      ? Row.map((Value, x) =>
+          typeof Value == `object` || Array.isArray(Value)
+            ? JSON.stringify(Value)
+            : Value
+        )
+      : JSON.stringify(Object.values(Row))
+  );
+}
+
+interface IElement {
+  _data: element;
+  _obj: object;
+  _str: string;
+  _num: number;
+  data: number | string | object | element | undefined;
+}
+
+class ElementAPI {
+  private _data: element;
+  private _obj: object;
+  private _str: string;
+  private _num: number;
+  public get data(): number | string | object | element | undefined {
+    return this._num != 0
+      ? this._num
+      : this._str != ``
+      ? this._str
+      : this._obj != {}
+      ? this._obj
+      : this._data != []
+      ? this._data
+      : undefined;
+  }
+  constructor(data: element) {
+    this._data = [];
+    this._str = ``;
+    this._num = 0;
+    this._obj = {};
+    Array.isArray(data)
+      ? (this._data = data)
+      : typeof data == `object`
+      ? (this._obj = data)
+      : typeof data == `string`
+      ? (this._str = data)
+      : typeof data == `number`
+      ? (this._num = data)
+      : data;
   }
 }

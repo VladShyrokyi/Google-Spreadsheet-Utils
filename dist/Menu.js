@@ -4,7 +4,7 @@ class Menu {
         this.UI = UI;
         UI.createMenu(`GLOBAL`)
             .addSubMenu(UI.createMenu(`SerpStat API`)
-            .addItem("Start", `TEST`)
+            .addItem('Start', `TEST`)
             .addItem(`Refresh`, `RefreshCellFormula`)
             .addItem(`Sorting by groups`, `Grouping`)
             .addItem(`Move active range`, `CopyData`))
@@ -17,15 +17,16 @@ class Menu {
             .addItem(`Sitemap Delete`, `TEST`)
             .addItem(`Active Range Sitemap Set`, `TEST`))
             .addSubMenu(UI.createMenu(`Properties`).addItem(`Get properties`, `GetProperties`))
+            .addSubMenu(UI.createMenu(`Templates`).addItem(`Base`, `MarkingQuery`))
             .addToUi();
     }
 }
 class CustomUI {
-    static showMessageBox(title, message = "") {
+    static showMessageBox(title, message = '') {
         let UI = SpreadsheetApp.getUi();
         UI.alert(title, message, UI.ButtonSet.OK);
     }
-    static showInputBox(title, message = "") {
+    static showInputBox(title, message = '') {
         let UI = SpreadsheetApp.getUi();
         let ButtonSet = UI.ButtonSet.OK_CANCEL;
         let response = UI.prompt(title, message, ButtonSet);

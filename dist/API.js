@@ -68,7 +68,9 @@ function FetchToAPI(URL) {
     }
     let cache = CacheService.getDocumentCache();
     let Key = URL.slice(0, 249);
-    if ((cache === null || cache === void 0 ? void 0 : cache.get(Key)) != null || (cache === null || cache === void 0 ? void 0 : cache.get(Key)) != undefined || (cache === null || cache === void 0 ? void 0 : cache.get(Key)) != ``) {
+    if ((cache === null || cache === void 0 ? void 0 : cache.get(Key)) != null ||
+        (cache === null || cache === void 0 ? void 0 : cache.get(Key)) != undefined ||
+        (cache === null || cache === void 0 ? void 0 : cache.get(Key)) != ``) {
         let content = UrlFetchApp.fetch(URL).getContentText();
         cache === null || cache === void 0 ? void 0 : cache.remove(Key);
         cache === null || cache === void 0 ? void 0 : cache.put(Key, content);
@@ -83,7 +85,7 @@ function FetchToAPI(URL) {
  * Options: CountMax - maximum rows to output
  * @param Key Cache key entry
  * @param Path String Path/to data/or params
- * @param Options Example: {"HideParam", "CountMax = 10", "JSON"}
+ * @param Options Example: "HideParam", "CountMax = 10", "JSON"
  * @customfunction
  */
 function GiveFromCache(Key, Path, ...Options) {
@@ -111,6 +113,7 @@ function GiveFromCache(Key, Path, ...Options) {
     }
     return CreateOutput(data, _Options);
 }
+//////////////////////////////////////////
 function ValidateElement(e, Path) {
     if (Array.isArray(e)) {
         let arr = [];
@@ -138,57 +141,169 @@ function ValidateObject(e, Path) {
 }
 function CreateOutput(data, Options) {
     if (typeof data == `string`) {
-        return data.toString();
+        //Return string
+        return data;
     }
     else if (typeof data == `number`) {
-        return parseInt(data);
+        //Return number
+        return data;
+    }
+    else if (Options === null || Options === void 0 ? void 0 : Options[`JSON`]) {
+        //Check Options
+        return JSON.stringify(data);
     }
     else if (Array.isArray(data)) {
+        //Create Result Array
         let DoubleArr = [];
-        for (let y = 0; y < data.length; y++) {
-            let Value = data[y];
-            if (typeof Value == "string" || typeof Value == `number`) {
-                DoubleArr[y] = Value;
-            }
-            else if (Array.isArray(Value)) {
-                let Arr = [];
-                for (let x = 0; x < Value.length; x++) {
-                    let element = Value[x];
-                    if (typeof element == `object`) {
-                        Arr[x] = JSON.stringify(element);
-                    }
-                    else {
-                        Arr[x] = element;
-                    }
-                }
-                DoubleArr.push(Arr);
-            }
-            else {
-                let Arr = [];
-                for (let x in Value) {
-                    Arr.push(JSON.stringify(Value[x]));
-                }
-                DoubleArr.push(Arr);
-            }
-            if (Options != null &&
-                Options[`isCountMax`] == true &&
-                Options[`CountMax`] == y) {
-                break;
-            }
-        }
+        //Iterating over an array
+        data.forEach((Row, y) => {
+            if ((Options === null || Options === void 0 ? void 0 : Options[`isCountMax`]) == true && Options[`CountMax`] == y)
+                return; //Check options
+            if (typeof Row == 'string' || typeof Row == `number`)
+                DoubleArr[y] = Row;
+            // else if (Options?.[`isRow`] == true) DoubleArr[y] = JSON.stringify(Value);
+            else if (Array.isArray(Row))
+                Row.forEach((Value, i) => typeof Value == `object`
+                    ? DoubleArr.push([JSON.stringify(Value)])
+                    : Array.isArray(Value)
+                        ? DoubleArr.push([JSON.stringify(Value)])
+                        : DoubleArr.push([Value]));
+            else
+                DoubleArr.push(JSON.stringify(Object.values(Row)));
+        });
+        //Return result Array
         return DoubleArr;
     }
     else {
-        return JSON.stringify(data);
+        //Return object as string
+        return Object.values(data);
     }
 }
 class OptionsValid {
     constructor(...Options) {
         Options.find((e) => {
-            if (typeof e == `string` && e.includes(` = `))
-                e = e.split(` = `);
-            this[`is${e[0]}`] = true;
-            this[e[0]] = parseInt(e[1]) - 1;
+            let arr = [];
+            if (e.includes(` = `)) {
+                arr = e.split(` = `);
+                this[`is${arr[0]}`] = true;
+                this[arr[0]] = parseInt(e[1]) - 1;
+            }
+            else {
+                this[`is${e}`] = true;
+            }
         }, this);
+    }
+}
+class UrlAPI {
+    // public get Params(): string[] {
+    //   return this._Params ? this._Params : [];
+    // }
+    // public set Params(value: string[]) {
+    //   this._Params = value.map((e) => encodeURIComponent(e));
+    // }
+    constructor(Base, ReportType, Query, Token, SearchRegion // public _Params?: string[]
+    ) {
+        this.Base = Base;
+        this.ReportType = ReportType;
+        this.Query = Query;
+        this.Token = Token;
+        this.SearchRegion = SearchRegion;
+    }
+    toString() {
+        return (`${encodeURI(this.Base)}` +
+            `${encodeURIComponent(this.ReportType)}` +
+            `?query=${encodeURIComponent(this.Query)}` +
+            `&token=${encodeURIComponent(this.Token)}` +
+            `&se=${encodeURIComponent(this.SearchRegion)}`
+        // +
+        // this.Params?.map((e, i) =>
+        //   i % 2 == 0
+        //     ? (e = encodeURIComponent(`&${e}`))
+        //     : (e = encodeURIComponent(`=${e}`))
+        // ).join(``)
+        );
+    }
+}
+class API {
+    constructor(_UrlAPI) {
+        this._UrlAPI = _UrlAPI;
+        this.cache = CacheService.getDocumentCache();
+    }
+    get UrlAPI() {
+        return this._UrlAPI.toString();
+    }
+    FetchQuery(Query) {
+        var _a, _b;
+        Query ? (this._UrlAPI.Query = encodeURIComponent(Query)) : '';
+        let Key = this._UrlAPI.toString().slice(0, 249);
+        let maybeValue = (_a = this.cache) === null || _a === void 0 ? void 0 : _a.get(Key);
+        if (maybeValue || maybeValue != ``)
+            ((_b = this.cache) === null || _b === void 0 ? void 0 : _b.remove(Key)) &&
+                this.cache.put(Key, UrlFetchApp.fetch(this._UrlAPI.toString()).getContentText());
+        return Key;
+    }
+    static GiveValue(Key, Path) {
+        let cache = CacheService.getDocumentCache();
+        let content = cache === null || cache === void 0 ? void 0 : cache.get(Key);
+        if (!content)
+            return `-`;
+        let data = JSON.parse(content);
+        if (Path)
+            Path.split(`/`).forEach((e) => (data = elementPath(data, e)));
+        else
+            return `No Path`;
+        return data;
+    }
+}
+function elementPath(e, Path) {
+    if (Array.isArray(e))
+        return e.map((e, i) => elementPath(e, Path));
+    else if (typeof e == `object`)
+        return e[Path] ? e[Path] : `Element empty`;
+    else
+        return e;
+}
+function writeValue(data, Options) {
+    return typeof data == `string` || typeof data == `number`
+        ? data
+        : Array.isArray(data)
+            ? toDoubleArray(data, Options)
+            : Object.values(data);
+}
+function toDoubleArray(Arr, Options) {
+    return Arr.map((Row, y) => typeof Row == `number` || typeof Row == `string`
+        ? Row
+        : Array.isArray(Row)
+            ? Row.map((Value, x) => typeof Value == `object` || Array.isArray(Value)
+                ? JSON.stringify(Value)
+                : Value)
+            : JSON.stringify(Object.values(Row)));
+}
+class ElementAPI {
+    constructor(data) {
+        this._data = [];
+        this._str = ``;
+        this._num = 0;
+        this._obj = {};
+        Array.isArray(data)
+            ? (this._data = data)
+            : typeof data == `object`
+                ? (this._obj = data)
+                : typeof data == `string`
+                    ? (this._str = data)
+                    : typeof data == `number`
+                        ? (this._num = data)
+                        : data;
+    }
+    get data() {
+        return this._num != 0
+            ? this._num
+            : this._str != ``
+                ? this._str
+                : this._obj != {}
+                    ? this._obj
+                    : this._data != []
+                        ? this._data
+                        : undefined;
     }
 }
