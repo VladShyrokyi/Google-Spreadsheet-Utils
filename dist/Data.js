@@ -45,8 +45,8 @@ class Data {
             }
         }
     }
-    // directed 1 - column+: 0 - row+
-    Copy(directed = 0) {
+    //** directed 1 - column +: 0 - row + * /
+    CopyOffset(directed = 0) {
         let rangeNew;
         if (directed == 1)
             rangeNew = this._range.offset(0, this.Columns);
@@ -68,23 +68,30 @@ class TemplateData extends Data {
         super(sheet.getRange(RowStart, ColumnStart, height, width));
         this.sheet = sheet;
         this._header = [];
-        // this.header = sheet
-        //   .getRange(RowStart, ColumnStart, 1, width)
-        //   .getValues()[0];
         this.header = this.data[0];
+        this._values = [];
+        height > 1 ? (this.values = this.data.slice(1)) : {};
     }
     set header(Values) {
-        if (Array.isArray(Values))
-            this._header = Values;
-        else if (typeof Values == `object`)
-            this._header = Object.values(Values);
-        else {
-            this._header = [];
-            this._header[0] = Values;
-        }
+        Array.isArray(Values)
+            ? (this._header = Values)
+            : typeof Values == `object`
+                ? (this._header = Object.values(Values))
+                : (this._header = []) && (this._header[0] = Values);
     }
     get header() {
         return this._header;
+    }
+    get values() {
+        return this._values;
+    }
+    set values(value) {
+        this._values = value.map((e) => Array.isArray(e) ? e : typeof e == `object` ? Object.values(e) : [e]);
+    }
+}
+class MarkingData extends TemplateData {
+    constructor(sheet) {
+        super(sheet, 1, 1, 5, 2);
     }
 }
 function MarkingQuery() {

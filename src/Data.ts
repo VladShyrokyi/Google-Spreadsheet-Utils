@@ -51,8 +51,8 @@ class Data implements IData {
       }
     }
   }
-  // directed 1 - column+: 0 - row+
-  Copy(directed: number = 0) {
+  //** directed 1 - column +: 0 - row + * /
+  CopyOffset(directed: number = 0) {
     let rangeNew: GoogleAppsScript.Spreadsheet.Range;
     if (directed == 1) rangeNew = this._range.offset(0, this.Columns);
     else if (directed == 0) rangeNew = this._range.offset(this.Rows, 0);
@@ -65,8 +65,28 @@ class ActiveDate extends Data {
     super(sheet.getActiveRange() || sheet.getRange(1, 1));
   }
 }
+type el = string | number;
 class TemplateData extends Data {
-  private _header: Array<string | number>;
+  private _header: el[];
+  private _values: el[][];
+  public set header(Values: Array<string | number>) {
+    Array.isArray(Values)
+      ? (this._header = Values)
+      : typeof Values == `object`
+      ? (this._header = Object.values(Values))
+      : (this._header = []) && (this._header[0] = Values);
+  }
+  public get header() {
+    return this._header;
+  }
+  public get values(): Array<el | el[]> {
+    return this._values;
+  }
+  public set values(value: Array<el | el[]>) {
+    this._values = value.map((e) =>
+      Array.isArray(e) ? e : typeof e == `object` ? Object.values(e) : [e]
+    );
+  }
   constructor(
     readonly sheet: GoogleAppsScript.Spreadsheet.Sheet,
     RowStart: number,
@@ -76,21 +96,14 @@ class TemplateData extends Data {
   ) {
     super(sheet.getRange(RowStart, ColumnStart, height, width));
     this._header = [];
-    // this.header = sheet
-    //   .getRange(RowStart, ColumnStart, 1, width)
-    //   .getValues()[0];
     this.header = this.data[0];
+    this._values = [];
+    height > 1 ? (this.values = this.data.slice(1)) : {};
   }
-  set header(Values: Array<string | number>) {
-    if (Array.isArray(Values)) this._header = Values;
-    else if (typeof Values == `object`) this._header = Object.values(Values);
-    else {
-      this._header = [];
-      this._header[0] = Values;
-    }
-  }
-  get header() {
-    return this._header;
+}
+class MarkingData extends TemplateData {
+  constructor(sheet: GoogleAppsScript.Spreadsheet.Sheet) {
+    super(sheet, 1, 1, 5, 2);
   }
 }
 function MarkingQuery() {
@@ -117,9 +130,7 @@ function MarkingQuery() {
   });
 
   let URLs = query.map((e, i) =>
-    e.map((q) =>
-      CreateQueryAPI(q, _token, _reportType[i], _base, _searchRegion)
-    )
+    e.map((q) => CreateAPI(q, _token, _reportType[i], _base, _searchRegion))
   );
 
   let Keys = URLs.map((e) => e.map((q) => FetchToAPI(q)));
