@@ -1,0 +1,16 @@
+{
+  "timeZone": "Europe/Bucharest",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "LocalizationApp",
+      "libraryId": "1AmjQDD0MQu6CTzYdEupF-scnfLcHbtSrXpLVJeWZfrVa5XSfXNwPDfDf",
+      "version": "8"
+    }]
+  },
+  "webapp": {
+    "access": "MYSELF",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

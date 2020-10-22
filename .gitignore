@@ -65,7 +65,7 @@ node_modules/@types/google-apps-script-oauth2/index.d.ts
 node_modules/@types/google-apps-script-oauth2/LICENSE
 node_modules/@types/google-apps-script-oauth2/package.json
 node_modules/@types/google-apps-script-oauth2/README.md
+GoogleAppScript.code-workspace
 .clasp.json
 .claspignore
-GoogleAppScript.code-workspace
 .gitignore
