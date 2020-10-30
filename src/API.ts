@@ -1,3 +1,18 @@
+//Connected lib URI.js
+eval(
+  UrlFetchApp.fetch(
+    `https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.2/URI.min.js`
+  ).getContentText()
+);
+
+// function bbb(str: string, ...param: string[]) {
+//   let url = new URI(str);
+//   param.forEach((v, i) => {
+//     i % 2 == 0 && url.addQuery(v, param[i + 1]);
+//   });
+//   return url.href();
+// }
+
 class API {
   private cache = CacheService.getDocumentCache();
   public get UrlAPI(): string {

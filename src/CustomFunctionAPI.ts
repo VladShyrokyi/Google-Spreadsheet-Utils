@@ -32,7 +32,7 @@ function CreateAPI(
  * @customfunction
  */
 function CreateUrl(URL: string, Query: string) {
-  if (!!Query) return `No Query`;
+  if (!Query) return `No Query`;
 
   let _Query = encodeURIComponent(Query);
   let q = `?query=`;
