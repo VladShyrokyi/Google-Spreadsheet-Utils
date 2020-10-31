@@ -1,25 +1,22 @@
 "use strict";
 //Connected lib URI.js
 eval(UrlFetchApp.fetch(`https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.2/URI.min.js`).getContentText());
-// function bbb(str: string, ...param: string[]) {
-//   let url = new URI(str);
-//   param.forEach((v, i) => {
-//     i % 2 == 0 && url.addQuery(v, param[i + 1]);
-//   });
-//   return url.href();
-// }
 class API {
     constructor(_UrlAPI) {
         this._UrlAPI = _UrlAPI;
         this.cache = CacheService.getDocumentCache();
     }
     get UrlAPI() {
-        return this._UrlAPI.toString();
+        return this._UrlAPI.valueOf();
     }
+    /**
+     * Get Data from API. Add to cache.
+     * @param Query if has replaced query
+     */
     FetchQuery(Query) {
         var _a, _b, _c;
         if (!!Query)
-            this._UrlAPI.Query = Query;
+            this._UrlAPI.removeSearch(`query`).addSearch({ query: Query });
         let Key = this.UrlAPI.slice(0, 249);
         if (!((_a = this.cache) === null || _a === void 0 ? void 0 : _a.get(Key))) {
             let value = UrlFetchApp.fetch(this._UrlAPI.toString()).getContentText();
@@ -28,6 +25,11 @@ class API {
         }
         return Key;
     }
+    /**
+     * Give Value to path from json object
+     * @param Key Key for value from cache
+     * @param Path Path to JSON object
+     */
     static GiveValue(Key, Path) {
         let cache = CacheService.getDocumentCache();
         let content = cache === null || cache === void 0 ? void 0 : cache.get(Key);
@@ -65,18 +67,33 @@ function toDoubleArray(Arr, Options) {
                 : Value)
             : JSON.stringify(Object.values(Row)));
 }
-class OptionsValid {
-    constructor(...Options) {
-        Options.find((e) => {
-            let arr = [];
-            if (e.includes(` = `)) {
-                arr = e.split(` = `);
-                this[`is${arr[0]}`] = true;
-                this[arr[0]] = parseInt(e[1]) - 1;
-            }
-            else {
-                this[`is${e}`] = true;
-            }
-        }, this);
-    }
-}
+// interface IOptions {
+//   [key: string]: Boolean | number;
+// }
+// class OptionsValid {
+//   options: IOptions[];
+//   data: element;
+//   constructor(data: element, ...Options: string[]) {
+//     this.data = data;
+//     this.options = Object.fromEntries(
+//       new Map(
+//         Options.map(
+//           (e: string, i) => (e.includes(` = `)
+//             ? [`${e.split(` = `)[0]}`, parseInt(e[1]) - 1]
+//             : [`${e}`]
+//           )
+//         )
+//       )
+//     );
+//   }
+//   JSON() {
+//     return this[`JSON`]
+//       ?  JSON.stringify(this.)
+//   }
+//   Validate(data: element) {
+//     return this[`JSON`]
+//       ? JSON.stringify(data) :
+//       this[`isCount`] && this[`CountMax`]
+//         ?
+//   }
+// }

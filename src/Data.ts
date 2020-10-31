@@ -133,7 +133,7 @@ function MarkingQuery() {
     e.map((q) => CreateAPI(q, _token, _reportType[i], _base, _searchRegion))
   );
 
-  let Keys = URLs.map((e) => e.map((q) => FetchToAPI(q)));
+  let Keys = URLs.map((e) => e.map((q) => FetchUrlToAPI(q)));
 
   let Values: any[][] = [];
   Keys.forEach((e, y) => {

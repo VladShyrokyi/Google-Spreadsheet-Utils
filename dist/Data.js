@@ -112,7 +112,7 @@ function MarkingQuery() {
             template.data.forEach((y, index) => index != 0 ? query[1].push(y[i]) : ``);
     });
     let URLs = query.map((e, i) => e.map((q) => CreateAPI(q, _token, _reportType[i], _base, _searchRegion)));
-    let Keys = URLs.map((e) => e.map((q) => FetchToAPI(q)));
+    let Keys = URLs.map((e) => e.map((q) => FetchUrlToAPI(q)));
     let Values = [];
     Keys.forEach((e, y) => {
         e.forEach((v, x) => {

@@ -30,16 +30,7 @@ class UrlAPI {
                 : (e = encodeURIComponent(`=${e}`)))) === null || _a === void 0 ? void 0 : _a.join(``))));
     }
     static ConvertUrlStringToUrlAPI(str) {
-        str = encodeURI(str);
-        let q = `?query=`;
-        let q_start = str.indexOf(q);
-        let q_stop = q_start + q.length;
-        let t = `&token=`;
-        let t_start = str.indexOf(t);
-        let t_stop = t_start + t.length;
-        let se = `&se=`;
-        let se_start = str.indexOf(se);
-        let se_stop = se_start + se.length;
-        return new UrlAPI(``, ``, ``, ``, ``);
+        let _URI = new URI(str);
+        return new UrlAPI(_URI.hostname() + _URI.pathname(), _URI.directory(), ``, ``, ``);
     }
 }
