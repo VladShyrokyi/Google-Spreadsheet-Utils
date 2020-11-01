@@ -12,6 +12,7 @@ class API {
     /**
      * Get Data from API. Add to cache.
      * @param Query if has replaced query
+     * @returns Key
      */
     FetchQuery(Query) {
         var _a, _b, _c;
@@ -25,75 +26,81 @@ class API {
         }
         return Key;
     }
+}
+class DataAPI {
+    constructor(key) {
+        this.key = key;
+        this.options = [];
+        this.data = `-`;
+        if (!!key) {
+            let cache = CacheService.getDocumentCache();
+            let content = cache === null || cache === void 0 ? void 0 : cache.get(key);
+            this.data = !content ? this.data : JSON.parse(content);
+        }
+    }
+    GetPath(path) {
+        path
+            ? path.split(`/`).forEach((e) => this.ToPath(e), this)
+            : this.setData(`No path`);
+        return this;
+    }
     /**
-     * Give Value to path from json object
-     * @param Key Key for value from cache
-     * @param Path Path to JSON object
+     * Add options for write data
+     * @param Option `JSON` or `CountMax = ${number}` or `HideParam`
      */
-    static GiveValue(Key, Path) {
-        let cache = CacheService.getDocumentCache();
-        let content = cache === null || cache === void 0 ? void 0 : cache.get(Key);
-        if (!content)
-            return `-`;
-        let data = JSON.parse(content);
-        if (Path)
-            Path.split(`/`).forEach((e) => (data = API.elementPath(data, e)));
-        else
-            return `No Path`;
-        return data;
+    addOption(Option) {
+        this.options.push(Option);
+        return this;
     }
-    static elementPath(e, Path) {
-        if (Array.isArray(e))
-            return e.map((e) => API.elementPath(e, Path));
-        else if (typeof e == `object`)
-            return e[Path] ? e[Path] : `Element empty`;
+    /**
+     * Convert data to Double array of string or number
+     */
+    Write() {
+        if (this.options.length != 0)
+            this.options.forEach((e) => this[`${e[0]}`](e[1]), this);
+        return typeof this.data == `string` || typeof this.data == `number`
+            ? this.data
+            : Array.isArray(this.data)
+                ? this.ToDoubleArray(this.data)
+                : Object.values(this.data);
+    }
+    /**
+     * Set Max rows to write
+     * @param {number} count rows
+     */
+    CountMax(count) {
+        return this.setData(
+        // JSON.stringify(count)
+        Array.isArray(this.data)
+            ? (this.data.length = count) && this.data
+            : this.data);
+    }
+    /**
+     * Convert data to JSON stringify
+     * @param {true} is true
+     */
+    JSON(is) {
+        return this.setData(JSON.stringify(this.data));
+    }
+    ToDoubleArray(data) {
+        return data.map((Row, y) => typeof Row == `number` || typeof Row == `string`
+            ? Row
+            : Array.isArray(Row)
+                ? Row.map((Value, x) => typeof Value == `object` || Array.isArray(Value)
+                    ? JSON.stringify(Value)
+                    : Value)
+                : Object.values(Row));
+    }
+    ToPath(path) {
+        if (Array.isArray(this.data))
+            return this.setData(this.data.map((e) => new DataAPI().setData(e).ToPath(path).data, this));
+        else if (typeof this.data == `object`)
+            return this.setData(this.data[path] ? this.data[path] : `-`);
         else
-            return e;
+            return this.setData(this.data);
+    }
+    setData(value) {
+        this.data = value;
+        return this;
     }
 }
-function writeValue(data, Options) {
-    return typeof data == `string` || typeof data == `number`
-        ? data
-        : Array.isArray(data)
-            ? toDoubleArray(data, Options)
-            : Object.values(data);
-}
-function toDoubleArray(Arr, Options) {
-    return Arr.map((Row, y) => typeof Row == `number` || typeof Row == `string`
-        ? Row
-        : Array.isArray(Row)
-            ? Row.map((Value, x) => typeof Value == `object` || Array.isArray(Value)
-                ? JSON.stringify(Value)
-                : Value)
-            : JSON.stringify(Object.values(Row)));
-}
-// interface IOptions {
-//   [key: string]: Boolean | number;
-// }
-// class OptionsValid {
-//   options: IOptions[];
-//   data: element;
-//   constructor(data: element, ...Options: string[]) {
-//     this.data = data;
-//     this.options = Object.fromEntries(
-//       new Map(
-//         Options.map(
-//           (e: string, i) => (e.includes(` = `)
-//             ? [`${e.split(` = `)[0]}`, parseInt(e[1]) - 1]
-//             : [`${e}`]
-//           )
-//         )
-//       )
-//     );
-//   }
-//   JSON() {
-//     return this[`JSON`]
-//       ?  JSON.stringify(this.)
-//   }
-//   Validate(data: element) {
-//     return this[`JSON`]
-//       ? JSON.stringify(data) :
-//       this[`isCount`] && this[`CountMax`]
-//         ?
-//   }
-// }

@@ -16,7 +16,7 @@ function CreateAPI(Base, ReportType, Query, Token, SearchRegion, ...Params) {
         .addSearch({ token: Token })
         .addSearch({ se: SearchRegion });
     Params.forEach(([key, value]) => URL.addSearch(key, value));
-    return URL.toString();
+    return URL.valueOf();
 }
 /**
  * Fetch URL from API. If there is a query, a new URL will be created.
@@ -29,11 +29,7 @@ function CreateAPI(Base, ReportType, Query, Token, SearchRegion, ...Params) {
 function FetchUrlToAPI(URL, Query) {
     let _URL = new URI(URL);
     let _API = new API(_URL);
-    return !_URL.is('url')
-        ? `No URL`
-        : !Query
-            ? _API.FetchQuery()
-            : _API.FetchQuery(Query);
+    return !_URL.is('url') ? `No URL` : !Query ? `-` : _API.FetchQuery(Query);
 }
 /**
  * Outputting data along a path from the cache.
@@ -44,46 +40,10 @@ function FetchUrlToAPI(URL, Query) {
  * @customfunction
  */
 function GiveFromCache(Key, Path, ...Options) {
-    let data = API.GiveValue(Key, Path);
-    // let _Options: OptionsValid = {};
-    // if (Options != null) {
-    //   _Options = new OptionsValid(...Options);
-    // }
-    // return CreateOutput(data, _Options);
-    return writeValue(data, Options[0]);
+    // let data: element = API.GiveValue(Key, Path);
+    let data = new DataAPI(Key).GetPath(Path);
+    Options.forEach((e) => e.includes(` = `)
+        ? data.addOption([`${e.split(` = `)[0]}`, parseInt(e.split(` = `)[1])])
+        : data.addOption([`${e}`, true]));
+    return data.Write();
 }
-// function CreateOutput(data: element, Options: OptionsValid) {
-//   if (typeof data == `string`) {
-//     //Return string
-//     return data;
-//   } else if (typeof data == `number`) {
-//     //Return number
-//     return data;
-//   } else if (Options?.[`JSON`]) {
-//     //Check Options
-//     return JSON.stringify(data);
-//   } else if (Array.isArray(data)) {
-//     //Create Result Array
-//     let DoubleArr: Array<Array<string | number> | string | number> = [];
-//     //Iterating over an array
-//     data.forEach((Row, y) => {
-//       if (Options?.[`isCountMax`] == true && Options[`CountMax`] == y) return; //Check options
-//       if (typeof Row == 'string' || typeof Row == `number`) DoubleArr[y] = Row;
-//       // else if (Options?.[`isRow`] == true) DoubleArr[y] = JSON.stringify(Value);
-//       else if (Array.isArray(Row))
-//         Row.forEach((Value, i) =>
-//           typeof Value == `object`
-//             ? DoubleArr.push([JSON.stringify(Value)])
-//             : Array.isArray(Value)
-//             ? DoubleArr.push([JSON.stringify(Value)])
-//             : DoubleArr.push([Value])
-//         );
-//       else DoubleArr.push(JSON.stringify(Object.values(Row)));
-//     });
-//     //Return result Array
-//     return DoubleArr;
-//   } else {
-//     //Return object as string
-//     return Object.values(data);
-//   }
-// }
