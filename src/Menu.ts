@@ -15,7 +15,7 @@ class Menu implements IMenu {
         UI.createMenu(`GSC`)
           .addItem(`Authentication`, `TEST`)
           .addItem(`Reset OAuth`, `TEST`)
-          .addItem(`Get Sites (To Active Range)`, `TESTGSC`)
+          .addItem(`Get Sites (To Active Range)`, `TestGSC`)
           .addItem(`Sitemap Get`, `TEST`)
           .addItem(`Sitemap Set`, `TEST`)
           .addItem(`Sitemap Delete`, `TEST`)
@@ -54,7 +54,7 @@ class CustomUI {
     SpreadsheetApp.getUi().Button.OK || SpreadsheetApp.getUi().Button.YES;
 }
 
-function TESTGSC() {
+function TestGSC() {
   let urls = GSC.getSites();
   if (urls != null) {
     CustomUI.showMessageBox(

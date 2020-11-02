@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Create template query to API SerpStat
  * @param {string} Base URL API Example: "http://api.serpstat.com/v3/"
@@ -10,13 +9,20 @@
  * @returns {string}
  * @customfunction
  */
-function CreateAPI(Base, ReportType, Query, Token, SearchRegion, ...Params) {
-    let URL = new URI(Base + ReportType)
-        .addSearch({ query: Query })
-        .addSearch({ token: Token })
-        .addSearch({ se: SearchRegion });
-    Params.forEach(([key, value]) => URL.addSearch(key, value));
-    return URL.valueOf();
+function CreateAPI(
+  Base: string,
+  ReportType: string,
+  Query: string,
+  Token: string,
+  SearchRegion: string,
+  ...Params: string[]
+): string {
+  let URL = new URI(Base + ReportType)
+    .addSearch({ query: Query })
+    .addSearch({ token: Token })
+    .addSearch({ se: SearchRegion });
+  Params.forEach(([key, value]) => URL.addSearch(key, value));
+  return URL.valueOf();
 }
 /**
  * Fetch URL from API. If there is a query, a new URL will be created.
@@ -26,10 +32,10 @@ function CreateAPI(Base, ReportType, Query, Token, SearchRegion, ...Params) {
  * @returns {string} if no url return `No URL` else return Key of Cache
  * @customfunction
  */
-function FetchUrlToAPI(URL, Query) {
-    let _URL = new URI(URL);
-    let _API = new API(_URL);
-    return !_URL.is('url') ? `No URL` : !Query ? `-` : _API.FetchQuery(Query);
+function FetchUrlToAPI(URL: string, Query?: string): string {
+  let _URL = new URI(URL);
+  let _API = new API(_URL);
+  return !_URL.is('url') ? `No URL` : !Query ? `-` : _API.FetchQuery(Query);
 }
 /**
  * Outputting data along a path from the cache.
@@ -39,11 +45,16 @@ function FetchUrlToAPI(URL, Query) {
  * @param Options Example: "HideParam", "CountMax = 10", "JSON"
  * @customfunction
  */
-function GiveFromCache(Key, Path, ...Options) {
-    // let data: element = API.GiveValue(Key, Path);
-    let data = new DataAPI(Key).GetPath(Path);
-    Options.forEach((e) => e.includes(` = `)
-        ? data.addOption([`${e.split(` = `)[0]}`, parseInt(e.split(` = `)[1])])
-        : data.addOption([`${e}`, true]));
-    return data.Write();
+function GiveFromCache(
+  Key: string,
+  Path: string,
+  ...Options: string[]
+): element | Array<element | element[]> {
+  let data = new Data(Key).getPath(Path);
+  Options.forEach((e) =>
+    e.includes(` = `)
+      ? data.addOption([`${e.split(` = `)[0]}`, parseInt(e.split(` = `)[1])])
+      : data.addOption([`${e}`, true])
+  );
+  return data.getData();
 }

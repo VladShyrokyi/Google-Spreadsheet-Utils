@@ -2,7 +2,7 @@ function Grouping() {
   let ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getActiveSheet();
   let range = sheet.getDataRange();
-  let data = new Data(range);
+  let data = new Table(range);
   let res = CustomUI.showInputBox(
     `Clustering`,
     `Enter the line number from which the grouping will start and the number of the column by which it will be sorted \r\n
@@ -34,6 +34,6 @@ function CopyData() {
   else CustomUI.showMessageBox(`Error`, `Invalid input`);
   let ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getActiveSheet();
-  let data = new ActiveDate(sheet);
+  let data = new ActiveTable(sheet);
   data.CopyOffset(Input);
 }

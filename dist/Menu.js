@@ -11,7 +11,7 @@ class Menu {
             .addSubMenu(UI.createMenu(`GSC`)
             .addItem(`Authentication`, `TEST`)
             .addItem(`Reset OAuth`, `TEST`)
-            .addItem(`Get Sites (To Active Range)`, `TESTGSC`)
+            .addItem(`Get Sites (To Active Range)`, `TestGSC`)
             .addItem(`Sitemap Get`, `TEST`)
             .addItem(`Sitemap Set`, `TEST`)
             .addItem(`Sitemap Delete`, `TEST`)
@@ -41,7 +41,7 @@ CustomUI.CANCEL = () => SpreadsheetApp.getUi().Button.CANCEL ||
     SpreadsheetApp.getUi().Button.CLOSE ||
     SpreadsheetApp.getUi().Button.NO;
 CustomUI.OK = () => SpreadsheetApp.getUi().Button.OK || SpreadsheetApp.getUi().Button.YES;
-function TESTGSC() {
+function TestGSC() {
     let urls = GSC.getSites();
     if (urls != null) {
         CustomUI.showMessageBox(`URLs`, urls.map((e) => `Site: ${JSON.stringify(e, null, ` \r\n`)}`).join(`\r\n`));
