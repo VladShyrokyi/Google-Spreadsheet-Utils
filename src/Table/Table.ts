@@ -19,12 +19,15 @@ class Table implements ITable {
     this.data = new Data().setData(this._range.getValues());
   }
   Sorting(StartRow: number, SortingColumn: number): Table {
+    let maybeArray = this.data.getData();
+    let maybeDoubleArray = Array.isArray(maybeArray) ? maybeArray : [[]];
+    let checkArray = maybeDoubleArray.map((e) => (Array.isArray(e) ? e : [e]));
     let checkValue: element = this._range
       .getCell(StartRow, SortingColumn)
       .getValue();
     let Arr = [];
     for (let i = StartRow; i <= this.Rows; i++) {
-      let Value = this.data[i - 1][SortingColumn];
+      let Value = checkArray[i - 1][SortingColumn];
       if (Value == checkValue)
         Array.isArray(Arr[Arr.length - 1])
           ? Arr[Arr.length - 1].push(i)
