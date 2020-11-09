@@ -6,17 +6,12 @@
  * @param {string} Query Keyword or domain
  * @param {string} Token Token from API
  * @param {string} SearchRegion
- * @param {string} Params Example: "&key=value"
+ * @param {string} Params Array [key, value] Example: "&key=value"
  * @returns {string}
  * @customfunction
  */
 function CreateAPI(Base, ReportType, Query, Token, SearchRegion, ...Params) {
-    let URL = new URI(Base + ReportType)
-        .addSearch({ query: Query })
-        .addSearch({ token: Token })
-        .addSearch({ se: SearchRegion });
-    Params.forEach(([key, value]) => URL.addSearch(key, value));
-    return URL.valueOf();
+    return new ApiSerpStat(Base, ReportType, Query, Token, SearchRegion, ...Params).url;
 }
 /**
  * Fetch URL from API. If there is a query, a new URL will be created.
