@@ -44,3 +44,36 @@ function CreateNewLocalBusiness(
     ],
   ];
 }
+
+function CreateBreadcrumb(
+  urlName1: string,
+  url1: string,
+  urlName2: string,
+  url2: string
+) {
+  return [
+    [
+      ,
+      `<script type="application/ld+json">
+      {
+        "@context": "https://schema.org/", 
+        "@type": "BreadcrumbList", 
+        "itemListElement": [
+          {
+            "@type": "ListItem", 
+            "position": 1, 
+            "name": "${urlName1}",
+            "item": "${url1}"  
+          },
+          {
+            "@type": "ListItem", 
+            "position": 2, 
+            "name": "${urlName2}",
+            "item": "${url2}"  
+          }
+        ]
+      }
+      </script>`,
+    ],
+  ];
+}
