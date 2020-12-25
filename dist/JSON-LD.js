@@ -36,3 +36,38 @@ function CreateNewLocalBusiness(name, imgURL, url, telephone, streetAddress, add
         ],
     ];
 }
+/**
+ * Create new JSON-LD, type: Breadcrumb
+ * @param urlName1 Name page 1.
+ * @param url1 URL page 1. Example: https://example.com
+ * @param urlName2 Name page 2.
+ * @param url2 URL page 2.
+ * @customfunction
+ */
+function CreateBreadcrumb(urlName1, url1, urlName2, url2) {
+    return [
+        [
+            ,
+            `<script type="application/ld+json">
+      {
+        "@context": "https://schema.org/", 
+        "@type": "BreadcrumbList", 
+        "itemListElement": [
+          {
+            "@type": "ListItem", 
+            "position": 1, 
+            "name": "${urlName1}",
+            "item": "${url1}"  
+          },
+          {
+            "@type": "ListItem", 
+            "position": 2, 
+            "name": "${urlName2}",
+            "item": "${url2}"  
+          }
+        ]
+      }
+      </script>`,
+        ],
+    ];
+}

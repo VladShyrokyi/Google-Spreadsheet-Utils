@@ -44,7 +44,14 @@ function CreateNewLocalBusiness(
     ],
   ];
 }
-
+/**
+ * Create new JSON-LD, type: Breadcrumb
+ * @param urlName1 Name page 1.
+ * @param url1 URL page 1. Example: https://example.com
+ * @param urlName2 Name page 2.
+ * @param url2 URL page 2.
+ * @customfunction
+ */
 function CreateBreadcrumb(
   urlName1: string,
   url1: string,
