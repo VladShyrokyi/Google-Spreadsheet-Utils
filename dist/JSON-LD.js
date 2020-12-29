@@ -71,3 +71,38 @@ function CreateBreadcrumb(urlName1, url1, urlName2, url2) {
         ],
     ];
 }
+/**
+ * Create new JSON-LD, type: Breadcrumb
+ * @param name Name item.
+ * @param url URL item page. Example: https://example.com/catalog/item.
+ * @param urlImage URL image item page.
+ * @param brand String Brand.
+ * @param currency Default: UAH.
+ * @param availability Default: https://schema.org/InStock.
+ * @param condition Default: https://schema.org/NewCondition.
+ * @customfunction
+ */
+function CreateProduct(name, url, price, urlImage, brand, currency = 'UAH', availability = 'https://schema.org/InStock', condition = 'https://schema.org/NewCondition') {
+    return [
+        [
+            ,
+            `<script type="application/ld+json">
+      {
+        "@context": "https://schema.org/", 
+        "@type": "Product", 
+        "name": "${name}",
+        "image": "${urlImage}",
+        "brand": "${brand}",
+        "offers": {
+          "@type": "Offer",
+          "url": "${url}",
+          "priceCurrency": "${currency}",
+          "price": "${price}",
+          "availability": "${availability}",
+          "itemCondition": "${condition}"
+        }
+      }
+      </script>`,
+        ],
+    ];
+}
