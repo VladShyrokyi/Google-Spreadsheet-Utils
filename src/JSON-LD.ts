@@ -88,7 +88,7 @@ function CreateBreadcrumb(
   ];
 }
 /**
- * Create new JSON-LD, type: Breadcrumb
+ * Create new JSON-LD, type: Product
  * @param name Name item.
  * @param url URL item page. Example: https://example.com/catalog/item.
  * @param urlImage URL image item page.
