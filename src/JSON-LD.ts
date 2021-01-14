@@ -46,6 +46,7 @@ function CreateNewLocalBusiness(
 }
 /**
  * Create new JSON-LD, type: Breadcrumb
+ * @param name Business Name.
  * @param urlName1 Name page 1.
  * @param url1 URL page 1. Example: https://example.com
  * @param urlName2 Name page 2.
@@ -53,6 +54,7 @@ function CreateNewLocalBusiness(
  * @customfunction
  */
 function CreateBreadcrumb(
+  name: string,
   urlName1: string,
   url1: string,
   urlName2: string,
@@ -65,6 +67,7 @@ function CreateBreadcrumb(
       {
         "@context": "https://schema.org/", 
         "@type": "BreadcrumbList", 
+        "name": "${name}",
         "itemListElement": [
           {
             "@type": "ListItem", 
